@@ -36,6 +36,8 @@ var enginesVideoEnhanceBusy = promauto.NewGaugeVec(prometheus.GaugeOpts{Name: "i
 var enginesVideoEnhanceSema = promauto.NewGaugeVec(prometheus.GaugeOpts{Name: "intel_gpu_top_engines_video_enhance_sema"}, unitLabels)
 var enginesVideoEnhanceWait = promauto.NewGaugeVec(prometheus.GaugeOpts{Name: "intel_gpu_top_engines_video_enhance_wait"}, unitLabels)
 
+var clientsTotal = promauto.NewGauge(prometheus.GaugeOpts{Name: "intel_gpu_top_clients_total"})
+
 func exportMetrics(logger *slog.Logger) {
 	metricsChannel := make(chan IntelGpuMetrics)
 	interval := 5 * time.Second
@@ -71,5 +73,7 @@ func exportMetrics(logger *slog.Logger) {
 		enginesVideoEnhanceBusy.WithLabelValues(metric.Engines.VideoEnhance.Unit).Set(metric.Engines.VideoEnhance.Busy)
 		enginesVideoEnhanceSema.WithLabelValues(metric.Engines.VideoEnhance.Unit).Set(metric.Engines.VideoEnhance.Sema)
 		enginesVideoEnhanceWait.WithLabelValues(metric.Engines.VideoEnhance.Unit).Set(metric.Engines.VideoEnhance.Wait)
+
+		clientsTotal.Set(float64(len(metric.Clients)))
 	}
 }
