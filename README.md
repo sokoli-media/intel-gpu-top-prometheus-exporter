@@ -50,8 +50,3 @@ I'll try to add it to the UnRaid community apps directory.
 Feel free to add a GitHub issue if you found something not to work as expected.
 
 Also, feel free to submit a pull request with a change if you can fix it yourself :)
-
-## You can't just panic and kill the process without mercy!
-
-This project is just a hobby project and I might take some shortcuts with it. Once I have some time to clean it up,
-I'll probably improve those things. If it really bugs you, feel free to create a pull request :)

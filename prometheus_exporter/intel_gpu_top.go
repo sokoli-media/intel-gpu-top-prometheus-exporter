@@ -65,12 +65,18 @@ type IntelGpuMetrics struct {
 			Unit string  `json:"unit"`
 		} `json:"VideoEnhance/0"`
 	} `json:"engines"`
-	Clients map[string]interface{} `json:"clients"`
+	// "clients" list does not work in docker, it works only on host machine
 }
 
 func removeTabs(input string) string {
 	re := regexp.MustCompile(`\t+`)
 	return re.ReplaceAllString(input, " ")
+}
+
+func metricsFromJson(payload string) (IntelGpuMetrics, error) {
+	var metrics IntelGpuMetrics
+	err := json.Unmarshal([]byte(payload), &metrics)
+	return metrics, err
 }
 
 func loadMetrics(logger *slog.Logger, metricsChannel chan IntelGpuMetrics, interval time.Duration) {
@@ -79,12 +85,14 @@ func loadMetrics(logger *slog.Logger, metricsChannel chan IntelGpuMetrics, inter
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		panic(err)
+		logger.Error("couldn't get stdout pipe", "error", err)
+		return
 	}
 
 	logger.Info("starting the command")
 	if err := cmd.Start(); err != nil {
-		panic(err)
+		logger.Error("couldn't start the command", "error", err)
+		return
 	}
 
 	scanner := bufio.NewScanner(stdout)
@@ -99,21 +107,21 @@ func loadMetrics(logger *slog.Logger, metricsChannel chan IntelGpuMetrics, inter
 		} else if line == "}" {
 			jsonBuilder.WriteString(line)
 
-			jsonString := removeTabs(jsonBuilder.String())
-			logger.Info("processing metrics", "metrics", jsonString)
+			jsonString := jsonBuilder.String()
+			logger.Info("processing metrics", "metrics", removeTabs(jsonString))
 
-			var metrics IntelGpuMetrics
-			if err := json.Unmarshal([]byte(jsonString), &metrics); err != nil {
-				panic(err)
+			metrics, err := metricsFromJson(jsonString)
+			if err != nil {
+				logger.Error("couldn't load metrics from json", "error", err)
+			} else {
+				metricsChannel <- metrics
 			}
-
-			metricsChannel <- metrics
 		} else {
 			jsonBuilder.WriteString(line)
 		}
 	}
 
 	if err := scanner.Err(); err != nil {
-		panic(err)
+		logger.Error("couldn't start scanner", "error", err)
 	}
 }
