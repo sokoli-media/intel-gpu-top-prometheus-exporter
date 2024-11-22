@@ -65,12 +65,18 @@ type IntelGpuMetrics struct {
 			Unit string  `json:"unit"`
 		} `json:"VideoEnhance/0"`
 	} `json:"engines"`
-	Clients map[string]interface{} `json:"clients"`
+	// "clients" list does not work in docker, it works only on host machine
 }
 
 func removeTabs(input string) string {
 	re := regexp.MustCompile(`\t+`)
 	return re.ReplaceAllString(input, " ")
+}
+
+func metricsFromJson(payload string) (IntelGpuMetrics, error) {
+	var metrics IntelGpuMetrics
+	err := json.Unmarshal([]byte(payload), &metrics)
+	return metrics, err
 }
 
 func loadMetrics(logger *slog.Logger, metricsChannel chan IntelGpuMetrics, interval time.Duration) {
@@ -99,11 +105,10 @@ func loadMetrics(logger *slog.Logger, metricsChannel chan IntelGpuMetrics, inter
 		} else if line == "}" {
 			jsonBuilder.WriteString(line)
 
-			jsonString := removeTabs(jsonBuilder.String())
-			logger.Info("processing metrics", "metrics", jsonString)
-
-			var metrics IntelGpuMetrics
-			if err := json.Unmarshal([]byte(jsonString), &metrics); err != nil {
+			jsonString := jsonBuilder.String()
+			logger.Info("processing metrics", "metrics", removeTabs(jsonString))
+			metrics, err := metricsFromJson(jsonString)
+			if err != nil {
 				panic(err)
 			}
 
