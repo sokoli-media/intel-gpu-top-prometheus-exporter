@@ -85,12 +85,14 @@ func loadMetrics(logger *slog.Logger, metricsChannel chan IntelGpuMetrics, inter
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		panic(err)
+		logger.Error("couldn't get stdout pipe", "error", err)
+		return
 	}
 
 	logger.Info("starting the command")
 	if err := cmd.Start(); err != nil {
-		panic(err)
+		logger.Error("couldn't start the command", "error", err)
+		return
 	}
 
 	scanner := bufio.NewScanner(stdout)
@@ -107,18 +109,19 @@ func loadMetrics(logger *slog.Logger, metricsChannel chan IntelGpuMetrics, inter
 
 			jsonString := jsonBuilder.String()
 			logger.Info("processing metrics", "metrics", removeTabs(jsonString))
+
 			metrics, err := metricsFromJson(jsonString)
 			if err != nil {
-				panic(err)
+				logger.Error("couldn't load metrics from json", "error", err)
+			} else {
+				metricsChannel <- metrics
 			}
-
-			metricsChannel <- metrics
 		} else {
 			jsonBuilder.WriteString(line)
 		}
 	}
 
 	if err := scanner.Err(); err != nil {
-		panic(err)
+		logger.Error("couldn't start scanner", "error", err)
 	}
 }
