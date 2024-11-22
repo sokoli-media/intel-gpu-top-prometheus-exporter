@@ -12,7 +12,7 @@ func RunHTTPServer(logger *slog.Logger) {
 	http.Handle("/metrics", promhttp.Handler())
 	err := http.ListenAndServe(":9000", nil)
 	if err != nil {
-		logger.Error("failed to run http server", err)
+		logger.Error("failed to run http server", "error", err)
 		return
 	}
 }
