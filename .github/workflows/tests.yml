@@ -2,8 +2,8 @@ name: Run tests on branch
 
 on:
   push:
-    branches:
-      - '!main'
+    branches-ignore:
+      - 'main'
 
 jobs:
   tests:
