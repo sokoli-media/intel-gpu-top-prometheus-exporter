@@ -79,19 +79,21 @@ func metricsFromJson(payload string) (IntelGpuMetrics, error) {
 	return metrics, err
 }
 
-func loadMetrics(logger *slog.Logger, metricsChannel chan IntelGpuMetrics, interval time.Duration) {
+func loadMetrics(logger *slog.Logger, metricsChannel chan IntelGpuMetrics, errorsChannel chan error, interval time.Duration) {
 	intervalInMs := strconv.Itoa(int(interval.Milliseconds()))
 	cmd := exec.Command("/usr/bin/intel_gpu_top", "-J", "-s", intervalInMs)
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		logger.Error("couldn't get stdout pipe", "error", err)
+		errorsChannel <- err
 		return
 	}
 
 	logger.Info("starting the command")
 	if err := cmd.Start(); err != nil {
 		logger.Error("couldn't start the command", "error", err)
+		errorsChannel <- err
 		return
 	}
 
@@ -113,6 +115,7 @@ func loadMetrics(logger *slog.Logger, metricsChannel chan IntelGpuMetrics, inter
 			metrics, err := metricsFromJson(jsonString)
 			if err != nil {
 				logger.Error("couldn't load metrics from json", "error", err)
+				errorsChannel <- err
 			} else {
 				metricsChannel <- metrics
 			}
@@ -123,5 +126,6 @@ func loadMetrics(logger *slog.Logger, metricsChannel chan IntelGpuMetrics, inter
 
 	if err := scanner.Err(); err != nil {
 		logger.Error("couldn't start scanner", "error", err)
+		errorsChannel <- err
 	}
 }
