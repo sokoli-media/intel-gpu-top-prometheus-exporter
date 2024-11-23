@@ -20,7 +20,7 @@ The Docker image is prebuilt for linux/amd64 machines.
 3. Click `Add container` button on the bottom of the page
 4. Fill in the data:
    1. Use `intel-gpu-top-prometheus-exporter` as a name (or anything else you wish)
-   2. Use `docker.io/maciejplonski/intel-gpu-top-prometheus-exporter:latest` as a repository
+   2. Use `docker.io/sokolimedia/intel-gpu-top-prometheus-exporter:latest` as a repository
    3. Check `Privileged` (it's required so that we can access GPU's metrics)
    4. Click on `Add another Path, Port, Variable, Label or Device`
       1. Choose `Device` as a `Config Type`
