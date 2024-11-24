@@ -199,7 +199,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "rotmhz"
         },
         "overrides": []
       },
@@ -404,7 +405,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "percent"
         },
         "overrides": []
       },
@@ -500,7 +502,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "watt"
         },
         "overrides": []
       },
@@ -609,7 +612,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "MiBs"
         },
         "overrides": []
       },
@@ -731,7 +735,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "percent"
         },
         "overrides": []
       },
@@ -853,7 +858,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "percent"
         },
         "overrides": []
       },
@@ -975,7 +981,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "percent"
         },
         "overrides": []
       },
@@ -1097,7 +1104,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "percent"
         },
         "overrides": []
       },
@@ -1268,7 +1276,8 @@
                 "value": 6000
               }
             ]
-          }
+          },
+          "unit": "ms"
         },
         "overrides": []
       },
@@ -1396,7 +1405,7 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "Intel GPU",
-  "uid": "intel-gpu-top-prometheus-exporter",
-  "version": 1,
+  "uid": "ae4p6v9u5vcw0b",
+  "version": 16,
   "weekStart": ""
 }
